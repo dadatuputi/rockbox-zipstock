@@ -19,6 +19,10 @@ What it does
   It uses the tags the books already have. After it come the usual music
   menus, with the books left out.
 - Long lines scroll sooner and faster than Rockbox's default.
+- The back button (the one below the screen, left of the wheel) goes back
+  one screen, and holding it goes to the main menu, as on the stock
+  firmware. Rockbox's own Back is still Left. This comes from
+  keyremap.kmf; it only changes that button.
 - Each book resumes where you left it, however you open it.
 
 Install
@@ -62,7 +66,10 @@ book picture instead.
 
 To undo
 Settings > Theme Settings > Browse Theme Files > cabbiev2 brings back the
-default look. Delete /.rockbox/tagnavi_user.config to get Rockbox's own
+default look. Delete /.rockbox/keyremap.kmf (and restart) to give the back
+button Rockbox's own behaviour again. If the player ever says "key remap
+failed" at start-up, your Rockbox build numbers its actions differently
+from the one this was made for: delete that file. Delete /.rockbox/tagnavi_user.config to get Rockbox's own
 database menus back.
 
 Fonts are Nunito (SIL Open Font License, see fonts/Nunito-OFL.txt),

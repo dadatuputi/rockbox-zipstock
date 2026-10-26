@@ -13,7 +13,7 @@ All screenshots are screen dumps from the Rockbox simulator for the Clip Zip.
 | --- | --- |
 | `theme/.rockbox/` | The theme. Copy it onto the player's own drive, merging with the `.rockbox` folder there. |
 | `INSTALL.txt` | The plain-text install notes that ship inside the zip. |
-| `tools/` | How the theme was made: `ttf2fnt.py` (TTF to Rockbox anti-aliased `.fnt`), `images.py` (draws the bitmaps), `checkskin.py` (static check of the skins), `sim.sh` (drives a Rockbox simulator under Xvfb). |
+| `tools/` | How the theme was made: `ttf2fnt.py` (TTF to Rockbox anti-aliased `.fnt`), `images.py` (draws the bitmaps), `checkskin.py` (static check of the skins), `keyremap.py` (writes `keyremap.kmf`), `sim.sh` (drives a Rockbox simulator under Xvfb). |
 | `build.sh` | Builds `zipstock-theme.zip` (the theme plus INSTALL.txt) for release. |
 
 ## Install
@@ -37,6 +37,10 @@ You need a Clip Zip already running Rockbox, and a Mac or PC to copy files.
 - Series come from the grouping tag. Audiobookshelf writes it when you run its **Embed Metadata** tool on a book, as `Harry Potter #5; Wizarding World #5` ([source](https://github.com/advplyr/audiobookshelf/blob/master/server/utils/ffmpegHelpers.js)). Only groupings with a `#` count as series, because Rockbox fills an empty grouping with the track title. Books without one still show under their author, by title.
 - Each book resumes where you left it, however you open it.
 
+### The back button
+
+`keyremap.kmf` makes the back button work as on the stock firmware: a short press goes back one screen, holding it goes to the main menu. Only that button changes, and only in lists and menus; Left still goes back too. Rockbox checks the file against its own build at start-up and refuses it with a "key remap failed" message if its action numbers differ (then delete the file). `tools/keyremap.py` writes it.
+
 ### Covers
 
 Rockbox shows embedded JPEG covers, or `cover.jpg` / `folder.jpg` beside the file. It can't show PNG or progressive JPEG; those books get a plain book picture.
@@ -45,6 +49,7 @@ Rockbox shows embedded JPEG covers, or `cover.jpg` / `folder.jpg` beside the fil
 
 - Theme: Settings > Theme Settings > Browse Theme Files > `cabbiev2`.
 - Database menus: delete `/.rockbox/tagnavi_user.config`.
+- Back button: delete `/.rockbox/keyremap.kmf` and restart.
 
 ## Rebuilding the assets
 
