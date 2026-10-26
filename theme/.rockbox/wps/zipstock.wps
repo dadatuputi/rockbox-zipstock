@@ -41,15 +41,15 @@
 %Cl(0,0,42,42,c,c)
 %?C<%Cd|%xd(nocover)>
 #
-# Beside the cover: author, book, then the series and its number (set by
-# tag-books.py), or else the part number when the file has one
+# Beside the cover: author, book, then the series (grouping tag), or else
+# the part number when the file has one
 %V(49,16,45,40,2)
 %Vf(ffffff)
 %s%?ia<%ia|%?iA<%iA|%?d(2)<%d(2)>>>
 %Vf(a8a8a8)
 %s%?id<%id|%?d(1)<%d(1)>>
 %Vf(a8a8a8)
-%?ik<%s%iG %ik|%?in<part %in>>
+%?iG<%s%iG|%?in<part %in>>
 #
 # Chapter or track title, across the screen
 %V(3,59,90,16,1)

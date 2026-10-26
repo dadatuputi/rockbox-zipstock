@@ -1,6 +1,6 @@
 # ZipStock
 
-A Rockbox theme for the SanDisk Sansa Clip Zip (96x96 colour) that looks like the stock firmware, plus a database menu for audiobooks: author, then series, then the books in order.
+A Rockbox theme for the SanDisk Sansa Clip Zip (96x96 colour) that looks like the stock firmware, plus database menus for audiobooks: by author, by series, and all books. It works with the tags the books already have; nothing needs to be added to them.
 
 ![ZipStock in the Rockbox simulator](screenshots/zipstock-simulator.png)
 ![Audiobooks by author and series](screenshots/zipstock-series.png)
@@ -12,10 +12,9 @@ All screenshots are screen dumps from the Rockbox simulator for the Clip Zip.
 | Path | What it is |
 | --- | --- |
 | `theme/.rockbox/` | The theme. Copy it onto the player's own drive, merging with the `.rockbox` folder there. |
-| `tag-books.py` | Writes series, number in the series and a short title into each `.m4b`, from the Audiobookshelf index on the card, so the database can list books by series. Dry run by default; `--apply`, `--undo`. Needs `mutagen`. |
 | `INSTALL.txt` | The plain-text install notes that ship inside the zip. |
 | `tools/` | How the theme was made: `ttf2fnt.py` (TTF to Rockbox anti-aliased `.fnt`), `images.py` (draws the bitmaps), `checkskin.py` (static check of the skins), `sim.sh` (drives a Rockbox simulator under Xvfb). |
-| `build.sh` | Builds `zipstock-theme.zip` for release. |
+| `build.sh` | Builds `zipstock-theme.zip` (the theme plus INSTALL.txt) for release. |
 
 ## Install
 
@@ -25,24 +24,18 @@ You need a Clip Zip already running Rockbox, and a Mac or PC to copy files.
 2. **Copy the theme.** Plug in the player and copy the `.rockbox` folder onto the player's own drive (not the microSD card), merging it with the `.rockbox` folder already there. Nothing of Rockbox's is replaced. On a Mac, Finder hides dot folders; press Cmd+Shift+. to show them.
 3. **Pick the theme.** Eject, then on the player: Settings > Theme Settings > Browse Theme Files > `zipstock`.
 4. **Load the settings.** Settings > General Settings > Manage Settings > Browse .cfg Files > `zipstock-setup`. It sets the main menu, autoresume, bookmarks and faster scrolling. Don't load `simple.cfg` after it: that turns icons off, and the main menu pictures come from the icons.
-5. **Tag the books.** Rockbox's database only knows what is in each file's tags. `tag-books.py` writes the series, the number in the series and a short title into each `.m4b` on the card, from the Audiobookshelf index (`<card>/.absh/index.json`). With the card in the computer:
-   ```sh
-   pip3 install mutagen
-   python3 tag-books.py /Volumes/MUSICSD/AUDIOBOOKS           # shows what it would write
-   python3 tag-books.py /Volumes/MUSICSD/AUDIOBOOKS --apply   # writes it
-   ```
-   Check the list from the first command before you apply. Only tags change, in place, never the audio. The old tags are saved to `<card>/.absh/tag-books-undo.json`, and `--undo` puts them back. Books in no series go under "Standalone books". Run it again whenever you add books.
-6. **Build the database.** On the player: Settings > General Settings > Database > Initialize Now. It scans in the background; give it a few minutes for a big library. Then turn the player off and on. At boot it asks to finish the database: press Select or wait 5 seconds (any other button says no). After that it updates itself at boot when files change.
-7. **Browse.** Main menu > library > Audiobooks:
-   - **Authors**: author, then series, then the books numbered 1 to N
-   - **Series**: series, then the books in order
+5. **Build the database.** On the player: Settings > General Settings > Database > Initialize Now. It scans in the background; give it a few minutes for a big library. Then turn the player off and on. At boot it asks to finish the database: press Select or wait 5 seconds (any other button says no). After that it updates itself at boot when files change.
+6. **Browse.** Main menu > library > Audiobooks:
+   - **Authors**: author, then their books. A book in a series starts with its series and number, so a series lists in order: "Harry Potter #5; Wizarding World #5: Harry Potter and the Order of the Phoenix".
+   - **Series**: each series and number, then the book (both editions, if you have two)
    - **All Books**: every book by name
-
-   A second edition shows its tag first, e.g. "5. (Full Cast) Order of the Phoenix". A book in several files shows "5.2 ..." for its second file.
 
 ### How books are found
 
-A file counts as an audiobook when its path has a folder named `AUDIOBOOKS` or it ends in `.m4b`. Music menus leave those files out. Each book resumes where you left it, however you open it.
+- A file counts as an audiobook when its path has a folder named `AUDIOBOOKS` or it ends in `.m4b`. Music menus leave those files out.
+- Books are listed by their album tag (the book title in normal audiobook files), or by file name when there is none. A book in several files gets one line per file: "Book", "Book, part 2".
+- Series come from the grouping tag. Audiobookshelf writes it when you run its **Embed Metadata** tool on a book, as `Harry Potter #5; Wizarding World #5` ([source](https://github.com/advplyr/audiobookshelf/blob/master/server/utils/ffmpegHelpers.js)). Only groupings with a `#` count as series, because Rockbox fills an empty grouping with the track title. Books without one still show under their author, by title.
+- Each book resumes where you left it, however you open it.
 
 ### Covers
 
@@ -52,7 +45,6 @@ Rockbox shows embedded JPEG covers, or `cover.jpg` / `folder.jpg` beside the fil
 
 - Theme: Settings > Theme Settings > Browse Theme Files > `cabbiev2`.
 - Database menus: delete `/.rockbox/tagnavi_user.config`.
-- Tags: `python3 tag-books.py /Volumes/MUSICSD/AUDIOBOOKS --undo`.
 
 ## Rebuilding the assets
 
@@ -73,6 +65,8 @@ Found while testing `tagnavi_user.config` in the simulator:
 - An empty tag compares as `<Untagged>`. Stock `tagnavi.config` tests for `[Untagged]`, which never matches.
 - A missing track number is stored as -1.
 - `[All tracks]` and `[Random]` are added to every list above the title level; a config can't remove them.
+- A `%format` condition on a text tag only works if the list's own search has opened that tag, or the database is in RAM. Otherwise the check silently fails. The book menus carry always-true clauses (`album !~ "~~~"`) to open the tags their formats test.
+- An empty grouping is stored as the track title.
 
 ## Licence
 
