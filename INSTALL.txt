@@ -19,9 +19,8 @@ What it does
   It uses the tags the books already have. After it come the usual music
   menus, with the books left out.
 - Long lines scroll sooner and faster than Rockbox's default.
-- The back button (the one below the screen, left of the wheel) goes back
-  one screen, and holding it goes to the main menu, as on the stock
-  firmware. Rockbox's own Back is still Left. This comes from
+- The back button goes back one screen, and holding it goes to the main
+  menu, as on the stock firmware. Rockbox's own Back is still Left. This comes from
   keyremap.kmf; it only changes that button.
 - Each book resumes where you left it, however you open it.
 
