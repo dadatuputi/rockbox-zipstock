@@ -1,0 +1,50 @@
+# ZipStock radio screen, for the 96x96 Sansa Clip Zip
+# The header as on Now Playing, the frequency in big type, the preset or
+# station name under it, and the band as a bar.
+%wd
+%X(backdrop.bmp)
+%Fl(2,11-Nunito-Bold.fnt)
+%Fl(3,17-Nunito-ExtraBold.fnt)
+#
+%xl(batt,battery.bmp,0,0,7)
+%xl(plug,charging.bmp,0,0)
+%xl(lock,lock.bmp,0,0)
+%xl(pbbg,pb-bg.bmp,0,0)
+%xl(radio,radio.bmp,0,0)
+#
+# Clear the whole page on a full redraw, so that pop-ups leave nothing behind
+%V(0,12,96,84,-)
+#
+# Header
+%V(3,0,66,12,2)
+%Vf(ffffff)
+radio
+#
+%V(70,2,7,8,-)
+%?mh<%xd(lock)>
+#
+%V(79,2,15,8,-)
+%?bp<%xd(plug)|%?bl<%xd(batt,1)|%xd(batt,2)|%xd(batt,3)|%xd(batt,4)|%xd(batt,5)|%xd(batt,6)|%xd(batt,7)>>
+#
+# Antenna
+%V(40,16,16,16,-)
+%xd(radio)
+#
+# Frequency
+%V(0,34,96,18,3)
+%Vf(ffffff)
+%ac%tf
+#
+# Preset name, or RDS station name, or the preset number
+%V(3,53,90,12,2)
+%Vf(c8c8c8)
+%s%ac%?Tn<%Tn|%?ty<%ty|%?Ti<preset %Ti|MHz>>>
+#
+# Band
+%V(3,69,90,5,-)
+%pb(0,0,90,5,image,pb-fill.bmp,backdrop,pbbg)
+#
+# Stereo or mono, and scan or preset mode
+%V(3,78,90,12,2)
+%Vf(a8a8a8)
+%al%?ts<stereo|mono>%ar%?tm<scan|presets>

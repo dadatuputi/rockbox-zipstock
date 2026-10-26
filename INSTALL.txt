@@ -1,0 +1,84 @@
+ZipStock: a stock-style Rockbox theme for the Sansa Clip Zip
+=============================================================
+
+What it does
+- Main menu: one big picture per page with a lower-case name, as the stock
+  firmware shows it. Up and Down move between pages, Select opens one.
+  Pages: playing, library, resume, folders, radio, settings.
+- Lists: five rows in a rounded font, with a blue selection bar.
+- Now Playing: cover, author, book, part number, chapter title, a
+  progress bar, time gone and time left. Volume shows while you change it.
+- Library (the Rockbox database) opens on Audiobooks, which has three lists:
+    Authors     author > series > the books in order: "1. Philosopher's
+                Stone", "2. Chamber of Secrets"...
+    Series      series > the books in order
+    All Books   every book by name
+  Titles are short ("Order of the Phoenix", not "Harry Potter and the Order
+  of the Phoenix"), and a second edition shows its tag first: "5. (Full
+  Cast) Order of the Phoenix". After it come the usual music menus, with
+  the books left out.
+- Long lines scroll sooner and faster than Rockbox's default.
+- Each book resumes where you left it, however you open it.
+
+Install
+1. Plug the Zip into the Mac. Copy the .rockbox folder from this zip onto
+   the player's own drive (not the card), merging it with the .rockbox
+   folder already there. Finder hides dot folders: press Cmd+Shift+. to
+   show them. Nothing in Rockbox's own files is replaced.
+2. Eject, then on the player: Settings > Theme Settings > Browse Theme
+   Files > zipstock.
+3. Settings > General Settings > Manage Settings > Browse .cfg Files >
+   zipstock-setup. This sets the main menu, autoresume and bookmarks. It
+   replaces simple.cfg; don't load simple.cfg after it, because simple.cfg
+   turns icons off and the main menu pictures come from the icons.
+4. Tag the books with their series (once, and again when you add books).
+   Rockbox's database only knows what is in the files' tags, so
+   tag-books.py, in this zip, writes the series, the number in the series
+   and a short title into each .m4b, from what Audiobookshelf says (the
+   plugin's index on the card). In Terminal, with the card in the Mac:
+       pip3 install mutagen
+       python3 tag-books.py /Volumes/MUSICSD/AUDIOBOOKS
+   That only shows the list it would write; check it, then add --apply:
+       python3 tag-books.py /Volumes/MUSICSD/AUDIOBOOKS --apply
+   Only the tags change, in place, not the audio. The old tags are saved,
+   and --undo puts them back. Books in no series go under "Standalone
+   books".
+5. Build the database once: Settings > General Settings > Database >
+   Initialize Now. It says "Updating in background" and keeps scanning while
+   you use the player; with 35 long books give it several minutes. Then turn
+   the player off and on. At boot it asks to finish the database: press
+   Select, or wait 5 seconds. Any other button says no. After that the
+   database updates itself at boot when files change.
+6. Open library > Audiobooks.
+
+How books are found
+- A file is an audiobook when its path has a folder named AUDIOBOOKS (on the
+  card that is /<microSD1>/AUDIOBOOKS) or it ends in .m4b.
+- Books are listed by their album tag (the short title after tag-books.py),
+  grouped by the grouping tag (the series) and numbered by the disc number
+  tag (the number in the series). A book without an album tag is listed by
+  its file name.
+- A book in several files gets one line per file: "5. Order of the Phoenix",
+  "5.2 Order of the Phoenix" in a series, "Book, part 2" elsewhere.
+- The Authors and Series lists start with [All tracks] and [Random]. Rockbox
+  adds those to every such list and a theme can't remove them.
+- Picking a book queues the whole list, so when a book ends the next one
+  starts, at the place you left it.
+
+Covers
+Rockbox shows embedded JPEG covers and cover.jpg or folder.jpg beside the
+file. It cannot show PNG or progressive JPEG covers; those books get a plain
+book picture instead.
+
+To undo
+Settings > Theme Settings > Browse Theme Files > cabbiev2 brings back the
+default look. Delete /.rockbox/tagnavi_user.config to get Rockbox's own
+database menus back.
+
+Fonts are Nunito (SIL Open Font License, see fonts/Nunito-OFL.txt),
+converted to Rockbox's anti-aliased format.
+
+Tested in the Rockbox simulator for the Clip Zip, built from Rockbox's
+source of 2026-10-25: main menu, lists, Audiobooks (Authors, Series, All
+Books, two editions of one book, a book in two files), Now Playing (with and
+without a cover, volume, pause), autoresume, folders and radio.

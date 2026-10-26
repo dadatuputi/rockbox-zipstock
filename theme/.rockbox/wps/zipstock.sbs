@@ -1,0 +1,63 @@
+# ZipStock status bar, for the 96x96 Sansa Clip Zip
+# Draws the header on every screen but Now Playing and the radio, and the
+# lists: one big page per item in the main menu, rows everywhere else.
+#
+# Fonts: 1 is the theme's list font, 2 the small header font, 3 the big one.
+%Fl(2,11-Nunito-Bold.fnt)
+%Fl(3,17-Nunito-ExtraBold.fnt)
+#
+# The header bar and the black page under it.
+%X(backdrop.bmp)
+#
+# The lists fill everything under the 12 pixel header.
+%Vi(-,0,13,96,83,1)
+#
+# The main menu (screen 1) shows one item per page, as the stock menu does.
+# Every other list gets rows. The scroll bar shows only in rows.
+%?if(%cs,=,1)<%Lb(page,96,83)|%Lb(row,92,16)%?LB<%Vd(scroll)>>
+#
+%xl(batt,battery.bmp,0,0,7)
+%xl(plug,charging.bmp,0,0)
+%xl(lock,lock.bmp,0,0)
+%xl(big,bigicons.bmp,0,0,33)
+%xl(arrows,arrows.bmp,0,0,2)
+#
+# Header: the screen's title on the left. The main menu shows the time instead.
+%V(3,0,68,12,2)
+%Vf(ffffff)
+%?if(%cs,=,1)<%?cc<%?St(time format)<%cH:%cM|%cl:%cM %cp>|Rockbox>|%s%?Lt<%Lt>>
+#
+# Hold switch
+%V(70,2,7,8,-)
+%?mh<%xd(lock)>
+#
+# Battery, with a plug while charging
+%V(79,2,15,8,-)
+%?bp<%xd(plug)|%?bl<%xd(batt,1)|%xd(batt,2)|%xd(batt,3)|%xd(batt,4)|%xd(batt,5)|%xd(batt,6)|%xd(batt,7)>>
+#
+# Scroll bar for long lists
+%Vl(scroll,93,15,3,79,-)
+%Vf(5a9bf0)
+%LB(0,0,3,79,vertical,invert,noborder)
+#
+# --- Main menu page, drawn once for the selected item ---
+# Big icon, centred
+%Vl(page,28,12,40,40,-)
+%xd(big,%LI,1)
+#
+# Its name, in lower case as on the stock player
+%Vl(page,0,57,96,18,3)
+%Vf(ffffff)
+%ac%?if(%LI,=,0)<library|%?if(%LI,=,25)<playing|%?if(%LI,=,10)<resume|%?if(%LI,=,29)<folders|%?if(%LI,=,28)<radio|%?if(%LI,=,21)<voice|%?if(%LI,=,20)<settings|%?if(%LI,=,2)<playlists|%?if(%LI,=,9)<apps|%?if(%LI,=,24)<system|%LT>>>>>>>>>>
+#
+# Up and down hints
+%Vl(page,44,1,8,5,-)
+%xd(arrows,1)
+%Vl(page,44,77,8,5,-)
+%xd(arrows,2)
+#
+# --- List row ---
+%Vl(row,0,0,92,16,1)
+%Vg(3d8ef0,1c5fc4,ffffff)
+%Vf(e8e8e8)
+%?Lc<%Vs(gradient)%s %LT|%Vs(clear) %LT>

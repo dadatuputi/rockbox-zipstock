@@ -1,0 +1,73 @@
+# ZipStock Now Playing, for the 96x96 Sansa Clip Zip
+# Cover top left with author, book and series number beside it, the chapter or track
+# title under it, then the progress bar with time gone and time left.
+#
+# Fonts: 1 is the theme's list font, 2 the small font, 3 the big one.
+%wd
+%X(backdrop.bmp)
+%Fl(2,11-Nunito-Bold.fnt)
+%Fl(3,17-Nunito-ExtraBold.fnt)
+#
+%xl(batt,battery.bmp,0,0,7)
+%xl(plug,charging.bmp,0,0)
+%xl(lock,lock.bmp,0,0)
+%xl(state,state.bmp,0,0,3)
+%xl(nocover,nocover.bmp,0,0)
+%xl(pbbg,pb-bg.bmp,0,0)
+%xl(volbg,vol-bg.bmp,0,0)
+#
+# Clear the whole page on a full redraw, so that pop-ups leave nothing behind
+%V(0,12,96,84,-)
+#
+# While the volume changes, a volume bar takes the place of the times.
+%?mv<%Vd(vol)|%Vd(times)>
+#
+# Header: play state and the time, battery on the right
+%V(3,2,8,8,-)
+%?mp<%xd(state,3)|%xd(state,1)|%xd(state,2)|%xd(state,1)|%xd(state,1)>
+#
+%V(13,0,56,12,2)
+%Vf(ffffff)
+%?cc<%?St(time format)<%cH:%cM|%cl:%cM %cp>|now playing>
+#
+%V(70,2,7,8,-)
+%?mh<%xd(lock)>
+#
+%V(79,2,15,8,-)
+%?bp<%xd(plug)|%?bl<%xd(batt,1)|%xd(batt,2)|%xd(batt,3)|%xd(batt,4)|%xd(batt,5)|%xd(batt,6)|%xd(batt,7)>>
+#
+# Cover, or a plain book when the file has none
+%V(3,15,42,42,-)
+%Cl(0,0,42,42,c,c)
+%?C<%Cd|%xd(nocover)>
+#
+# Beside the cover: author, book, then the series and its number (set by
+# tag-books.py), or else the part number when the file has one
+%V(49,16,45,40,2)
+%Vf(ffffff)
+%s%?ia<%ia|%?iA<%iA|%?d(2)<%d(2)>>>
+%Vf(a8a8a8)
+%s%?id<%id|%?d(1)<%d(1)>>
+%Vf(a8a8a8)
+%?ik<%s%iG %ik|%?in<part %in>>
+#
+# Chapter or track title, across the screen
+%V(3,59,90,16,1)
+%Vf(ffffff)
+%s%?it<%it|%fn>
+#
+# Progress bar
+%V(3,77,90,5,-)
+%pb(0,0,90,5,image,pb-fill.bmp,backdrop,pbbg)
+#
+# Time gone and time left
+%Vl(times,3,83,90,12,2)
+%Vf(c8c8c8)
+%al%pc%ar-%pr
+#
+# Volume
+%Vl(vol,3,83,90,12,2)
+%Vf(ffffff)
+%al%pv dB
+%Vl(vol,40,86,53,5,-)
+%pv(0,0,53,5,image,vol-fill.bmp,backdrop,volbg)
