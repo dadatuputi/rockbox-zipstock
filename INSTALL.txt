@@ -23,9 +23,11 @@ Install
    faster scrolling. The main menu pictures come from Rockbox's icons, so
    leave Settings > Theme Settings > Show Icons on.
 4. Build the database once: Settings > General Settings > Database >
-   Initialize Now. It scans in the background while you use the player;
-   give it a few minutes for a large library. Then turn the player off and
-   on. At start-up Rockbox asks whether to finish the database: press
+   Initialize Now. It scans in the background; give it a few minutes for a
+   large library. Don't start playback until you have restarted: the scan
+   holds the memory Rockbox needs to load a playlist, so opening Now Playing
+   meanwhile shows "playlist_resume(): OOM". That is harmless; the scan
+   carries on. Then turn the player off and on. At start-up Rockbox asks whether to finish the database: press
    Select, or wait 5 seconds. Any other button says no. After that the
    database updates itself at start-up when files change.
 5. Go to library > Audiobooks.

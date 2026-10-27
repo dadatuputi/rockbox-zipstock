@@ -31,6 +31,7 @@ It was tested against a Rockbox development build from October 2026. Older relea
 3. **Pick the theme.** Eject the player, then go to Settings > Theme Settings > Browse Theme Files > `zipstock`.
 4. **Load the settings.** Go to Settings > General Settings > Manage Settings > Browse .cfg Files > `zipstock-setup`. This sets the main menu order, autoresume, bookmarks and faster scrolling. The main menu pictures come from Rockbox's icons, so leave Settings > Theme Settings > Show Icons on.
 5. **Build the database.** Go to Settings > General Settings > Database > Initialize Now. It scans in the background, so give it a few minutes for a large library. Then turn the player off and on again.
+   - Don't start playback until you've restarted. The scan holds the memory Rockbox needs to load a playlist, so opening Now Playing during the scan shows `playlist_resume(): OOM`. This is harmless: the scan carries on.
    - At start-up Rockbox asks whether to finish the database. Press Select, or wait 5 seconds. Any other button says no.
    - After that, the database updates itself at start-up whenever files change.
 6. **Browse.** Go to the main menu, then library, then Audiobooks.
