@@ -28,6 +28,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      # checkskin.py opens the bitmaps to check their sizes against the skins.
+      - run: pip install pillow
+
       - name: Fetch Rockbox's skin tag table
         run: |
           mkdir -p rockbox/lib/skin_parser
