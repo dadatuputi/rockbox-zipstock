@@ -1,12 +1,18 @@
 name: Release
 
 # git tag v1.0.0 && git push origin v1.0.0
+# or, from the Actions tab: Release > Run workflow, naming the tag to create.
 # Runs the checks, then publishes zipstock-theme.zip on a GitHub release.
 # A tag with a hyphen (v1.0.0-beta.1) is marked as a prerelease.
 
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to create and release (e.g. v1.0.0-beta.1)"
+        required: true
 
 permissions:
   contents: write
@@ -18,22 +24,24 @@ jobs:
   release:
     needs: verify
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v5
 
       - name: Build the zip
         run: |
           ./build.sh
-          mv zipstock-theme.zip "zipstock-theme-${GITHUB_REF_NAME}.zip"
+          mv zipstock-theme.zip "zipstock-theme-${TAG}.zip"
 
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           FLAGS=""
-          case "$GITHUB_REF_NAME" in *-*) FLAGS="--prerelease" ;; esac
+          case "$TAG" in *-*) FLAGS="--prerelease" ;; esac
           cat > notes.md <<NOTES
-          Download **zipstock-theme-${GITHUB_REF_NAME}.zip**, unzip it, and follow
+          Download **zipstock-theme-${TAG}.zip**, unzip it, and follow
           ZIPSTOCK-README.txt inside: copy the \`.rockbox\` folder onto the Clip Zip,
           then pick the theme and load \`zipstock-setup\` on the player.
 
@@ -41,5 +49,7 @@ jobs:
           of 2026-10-25; on a much newer build, the back-button remap may be refused
           ("key remap failed"). Delete \`/.rockbox/keyremap.kmf\` if so.
           NOTES
-          gh release create "$GITHUB_REF_NAME" "zipstock-theme-${GITHUB_REF_NAME}.zip" \
-            --title "ZipStock $GITHUB_REF_NAME" --notes-file notes.md $FLAGS
+          # --target is used only when the tag does not exist yet: a run
+          # from the Actions tab creates it at the commit it built.
+          gh release create "$TAG" "zipstock-theme-${TAG}.zip" \
+            --target "$GITHUB_SHA" --title "ZipStock $TAG" --notes-file notes.md $FLAGS

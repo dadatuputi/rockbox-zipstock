@@ -81,7 +81,8 @@ git tag v1.0.0 && git push origin v1.0.0          # release
 git tag v1.0.0-beta.1 && git push origin v1.0.0-beta.1   # prerelease
 ```
 
-The Release workflow runs the same checks as CI, then publishes
+Or run **Release** from the Actions tab, naming the tag; it creates the tag at
+the commit it builds. The Release workflow runs the same checks as CI, then publishes
 `zipstock-theme-<tag>.zip` on a GitHub release. CI checks every push:
 
 - the skins against the tag table of the Rockbox source the theme was tested
