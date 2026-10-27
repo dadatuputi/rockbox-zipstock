@@ -57,6 +57,7 @@ jobs:
           unzip -Z1 zipstock-theme.zip | sort > "$RUNNER_TEMP/got"
           cat "$RUNNER_TEMP/got"
           for f in ZIPSTOCK-README.txt \
+                   ZIPSTOCK-LICENSE.txt \
                    .rockbox/themes/zipstock.cfg \
                    .rockbox/zipstock-setup.cfg \
                    .rockbox/tagnavi_user.config \

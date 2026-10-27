@@ -1,81 +1,94 @@
-ZipStock: a stock-style Rockbox theme for the Sansa Clip Zip
-=============================================================
+ZipStock: a Rockbox theme for the Sansa Clip Zip in the style of its
+original firmware
+=====================================================================
 
-What it does
-- Main menu: one big picture per page with a lower-case name, as the stock
-  firmware shows it. Up and Down move between pages, Select opens one.
-  Pages: playing, library, resume, folders, radio, settings.
-- Lists: five rows in a rounded font, with a blue selection bar.
-- Now Playing: cover, author, book, series (or part number), chapter title, a
-  progress bar, time gone and time left. Volume shows while you change it.
-- Library (the Rockbox database) opens on Audiobooks, which has three lists:
-    Authors     author > their books. A book in a series starts with
-                its series and number, so a series lists in order:
-                "Harry Potter #5; Wizarding World #5: Harry Potter and
-                the Order of the Phoenix".
-    Series      each series and number > the book (both editions, if you
-                have two).
-    All Books   every book by name.
-  It uses the tags the books already have. After it come the usual music
-  menus, with the books left out.
-- Long lines scroll sooner and faster than Rockbox's default.
-- The back button goes back one screen, and holding it goes to the main
-  menu, as on the stock firmware. Rockbox's own Back is still Left. This comes from
-  keyremap.kmf; it only changes that button.
-- Each book resumes where you left it, however you open it.
+ZipStock makes Rockbox on the Clip Zip look like the player's original
+firmware, and adds menus for audiobooks by author, by series and by title.
+It uses the tags your books already have.
+
+You need a Sansa Clip Zip already running Rockbox. It was tested against a
+Rockbox development build from October 2026.
 
 Install
-1. Plug the Zip into the Mac. Copy the .rockbox folder from this zip onto
-   the player's own drive (not the card), merging it with the .rockbox
-   folder already there. Finder hides dot folders: press Cmd+Shift+. to
-   show them. Nothing in Rockbox's own files is replaced.
-2. Eject, then on the player: Settings > Theme Settings > Browse Theme
-   Files > zipstock.
-3. Settings > General Settings > Manage Settings > Browse .cfg Files >
-   zipstock-setup. This sets the main menu, autoresume and bookmarks. It
-   replaces simple.cfg; don't load simple.cfg after it, because simple.cfg
-   turns icons off and the main menu pictures come from the icons.
+1. Connect the player to your computer. Copy the .rockbox folder from this
+   zip onto the player's internal drive, not the microSD card. Merge it with
+   the .rockbox folder that is already there. None of Rockbox's own files
+   are replaced.
+   macOS and Linux hide folders whose names start with a dot. To show them,
+   press Cmd+Shift+. in Finder, or Ctrl+H in most Linux file managers.
+2. Eject the player. On the player, go to Settings > Theme Settings >
+   Browse Theme Files > zipstock.
+3. Go to Settings > General Settings > Manage Settings > Browse .cfg Files >
+   zipstock-setup. This sets the main menu order, autoresume, bookmarks and
+   faster scrolling. The main menu pictures come from Rockbox's icons, so
+   leave Settings > Theme Settings > Show Icons on.
 4. Build the database once: Settings > General Settings > Database >
-   Initialize Now. It says "Updating in background" and keeps scanning while
-   you use the player; with 35 long books give it several minutes. Then turn
-   the player off and on. At boot it asks to finish the database: press
+   Initialize Now. It scans in the background while you use the player;
+   give it a few minutes for a large library. Then turn the player off and
+   on. At start-up Rockbox asks whether to finish the database: press
    Select, or wait 5 seconds. Any other button says no. After that the
-   database updates itself at boot when files change.
-5. Open library > Audiobooks.
+   database updates itself at start-up when files change.
+5. Go to library > Audiobooks.
+
+What it does
+- Main menu: one large picture per page with a lower-case name. Up and Down
+  move between pages, and Select opens one. The pages are playing, library,
+  resume, folders, radio and settings.
+- Lists: five rows in a rounded font, with a blue selection bar. Long lines
+  scroll sooner and faster than Rockbox's default.
+- Now Playing: the cover, author, book, series (or part number), chapter
+  title, a progress bar, and time gone and left. The volume shows while you
+  change it.
+- Library > Audiobooks has three lists:
+    Authors     each author, then their books. A book in a series starts
+                with its series and number, so a series lists in order:
+                "Harry Potter #5: Harry Potter and the Order of the
+                Phoenix".
+    Series      each series and number, then the book. Two editions of the
+                same book both appear.
+    All Books   every book, by name.
+  The usual music menus follow, with the books left out.
+- Each book resumes where you left it, however you open it.
+- The back button goes back one screen, and holding it goes to the main
+  menu. Left still goes back as well. Only that button changes.
 
 How books are found
-- A file is an audiobook when its path has a folder named AUDIOBOOKS (on the
-  card that is /<microSD1>/AUDIOBOOKS) or it ends in .m4b.
-- Books are listed by their album tag, which is the book title in normal
-  audiobook files. A book without an album tag is listed by its file name.
-- Series come from the grouping tag. Audiobookshelf writes it when you run
-  its Embed Metadata tool on a book, as "Harry Potter #5; Wizarding World
-  #5". Books whose grouping has no "#" (or that have none) are left out of
-  Series and listed by title under their author.
-- A book in several files gets one line per file: "Book", "Book, part 2".
-- The Authors and Series lists start with [All tracks] and [Random]. Rockbox
-  adds those to every such list and a theme can't remove them.
-- Picking a book queues the whole list, so when a book ends the next one
-  starts, at the place you left it.
+- A file is an audiobook when it is inside a folder named AUDIOBOOKS, on the
+  player or the card, or when its name ends in .m4b.
+- Books are listed by their album tag, which holds the book title in most
+  audiobook files. A book with no album tag is listed by its file name.
+- A book split into several files gets one line per file: "Book",
+  "Book, part 2". Picking a book queues the rest of the list, so the next
+  one starts when it ends.
+- Series come from the grouping tag, written as "Series #N". Several series
+  can be separated by "; ", as in "Harry Potter #5; Wizarding World #5".
+  Audiobookshelf's Embed Metadata tool writes this format, and any tag
+  editor can set it. Only groupings that contain a "#" count as series.
+  Books without a series still appear under their author and in All Books.
+- Rockbox adds [All tracks] and [Random] to the top of the Authors and
+  Series lists. A theme can't remove them.
 
 Covers
-Rockbox shows embedded JPEG covers and cover.jpg or folder.jpg beside the
-file. It cannot show PNG or progressive JPEG covers; those books get a plain
-book picture instead.
+Rockbox shows covers embedded in the file as JPEG, or a cover.jpg or
+folder.jpg file next to the book. It can't show PNG or progressive JPEG
+covers, so those books get a plain book picture instead.
+
+Chapters
+Rockbox doesn't read the chapters inside .m4b files. If a book has a cue
+sheet with the same name next to it (Book.cue beside Book.m4b), Next and
+Previous skip between its chapters.
+
+If the player says "key remap failed"
+Your Rockbox build numbers its button actions differently from the one this
+was made for. Delete /.rockbox/keyremap.kmf. Everything else keeps working,
+and the back button behaves as Rockbox's default.
 
 To undo
-Settings > Theme Settings > Browse Theme Files > cabbiev2 brings back the
-default look. Delete /.rockbox/keyremap.kmf (and restart) to give the back
-button Rockbox's own behaviour again. If the player ever says "key remap
-failed" at start-up, your Rockbox build numbers its actions differently
-from the one this was made for: delete that file. Delete /.rockbox/tagnavi_user.config to get Rockbox's own
-database menus back.
+- Theme: Settings > Theme Settings > Browse Theme Files > cabbiev2.
+- Audiobook menus: delete /.rockbox/tagnavi_user.config.
+- Back button: delete /.rockbox/keyremap.kmf and restart the player.
 
-Fonts are Nunito (SIL Open Font License, see fonts/Nunito-OFL.txt),
-converted to Rockbox's anti-aliased format.
-
-Tested in the Rockbox simulator for the Clip Zip, built from Rockbox's
-source of 2026-10-25: main menu, lists, Audiobooks (Authors, Series, All
-Books, with Audiobookshelf-style series tags, with none, and a book with no
-album tag), Now Playing (with and
-without a cover, volume, pause), autoresume, folders and radio.
+ZipStock is under the MIT License (ZIPSTOCK-LICENSE.txt).
+Fonts: Nunito, (c) 2014 The Nunito Project Authors, under the SIL Open Font
+License 1.1 (fonts/Nunito-OFL.txt), converted to Rockbox's anti-aliased
+format.

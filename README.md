@@ -1,98 +1,143 @@
 # ZipStock
 
-A Rockbox theme for the SanDisk Sansa Clip Zip (96x96 colour) that looks like the stock firmware, plus database menus for audiobooks: by author, by series, and all books. It works with the tags the books already have; nothing needs to be added to them.
+A Rockbox theme for the SanDisk Sansa Clip Zip that looks like the player's original firmware. It also adds database menus for audiobooks, listing them by author, by series, or as all books. These menus use the tags your books already have, so you don't need to retag anything.
 
 ![ZipStock in the Rockbox simulator](screenshots/zipstock-simulator.png)
 ![Audiobooks by author and series](screenshots/zipstock-series.png)
 
-All screenshots are screen dumps from the Rockbox simulator for the Clip Zip.
+The screenshots are screen dumps from the Rockbox simulator for the Clip Zip.
 
-## What's here
+## Features
 
-| Path | What it is |
-| --- | --- |
-| `theme/.rockbox/` | The theme. Copy it onto the player's own drive, merging with the `.rockbox` folder there. |
-| `INSTALL.txt` | The plain-text install notes that ship inside the zip. |
-| `tools/` | How the theme was made: `ttf2fnt.py` (TTF to Rockbox anti-aliased `.fnt`), `images.py` (draws the bitmaps), `checkskin.py` (static check of the skins), `keyremap.py` (writes `keyremap.kmf`), `sim.sh` (drives a Rockbox simulator under Xvfb). |
-| `build.sh` | Builds `zipstock-theme.zip` (the theme plus INSTALL.txt) for release. |
-| `.github/workflows/` | CI checks every push; a `v*` tag publishes the zip as a release. |
+- **Main menu**: one large picture per page with a lower-case name, the way the original firmware shows it. Up and Down move between pages, and Select opens one. The pages are playing, library, resume, folders, radio and settings.
+- **Lists**: five rows in a rounded font, with a blue selection bar. Long lines scroll sooner and faster than Rockbox's default.
+- **Now Playing**: the cover, author, book, series (or part number), chapter title, a progress bar, and time gone and left. The volume shows while you change it.
+- **Audiobooks**: the library opens on Authors, Series and All Books, followed by the usual music menus with the books left out.
+- **Resume**: each book picks up where you left it, however you open it.
+- **Back button**: a short press goes back one screen, and holding it goes to the main menu, as on the original firmware.
+
+## Requirements
+
+- A Sansa Clip Zip already running Rockbox. The theme is made for the Clip Zip's 96x96 colour screen only.
+- A computer to copy files to the player: Windows, macOS or Linux.
+
+It was tested against a Rockbox development build from October 2026. Older releases may lack some of the skin features it uses. See [The back button](#the-back-button) for one known difference between builds.
 
 ## Install
 
-You need a Clip Zip already running Rockbox, and a Mac or PC to copy files.
+1. **Get the files.** Download `zipstock-theme-<version>.zip` from [Releases](../../releases) and unzip it.
+2. **Copy the theme.** Connect the player and copy the `.rockbox` folder from the zip onto the player's internal drive, not the microSD card. Merge it with the `.rockbox` folder that is already there. None of Rockbox's own files are replaced.
+   - macOS and Linux hide folders whose names start with a dot. To show them, press Cmd+Shift+. (period) in Finder, or Ctrl+H in most Linux file managers. Windows shows them as they are.
+3. **Pick the theme.** Eject the player, then go to Settings > Theme Settings > Browse Theme Files > `zipstock`.
+4. **Load the settings.** Go to Settings > General Settings > Manage Settings > Browse .cfg Files > `zipstock-setup`. This sets the main menu order, autoresume, bookmarks and faster scrolling. The main menu pictures come from Rockbox's icons, so leave Settings > Theme Settings > Show Icons on.
+5. **Build the database.** Go to Settings > General Settings > Database > Initialize Now. It scans in the background, so give it a few minutes for a large library. Then turn the player off and on again.
+   - At start-up Rockbox asks whether to finish the database. Press Select, or wait 5 seconds. Any other button says no.
+   - After that, the database updates itself at start-up whenever files change.
+6. **Browse.** Go to the main menu, then library, then Audiobooks.
 
-1. **Get the files.** Download `zipstock-theme-<version>.zip` from [Releases](../../releases), or clone this repo and run `./build.sh`. Unzip it.
-2. **Copy the theme.** Plug in the player and copy the `.rockbox` folder onto the player's own drive (not the microSD card), merging it with the `.rockbox` folder already there. Nothing of Rockbox's is replaced. On a Mac, Finder hides dot folders; press Cmd+Shift+. to show them.
-3. **Pick the theme.** Eject, then on the player: Settings > Theme Settings > Browse Theme Files > `zipstock`.
-4. **Load the settings.** Settings > General Settings > Manage Settings > Browse .cfg Files > `zipstock-setup`. It sets the main menu, autoresume, bookmarks and faster scrolling. Don't load `simple.cfg` after it: that turns icons off, and the main menu pictures come from the icons.
-5. **Build the database.** On the player: Settings > General Settings > Database > Initialize Now. It scans in the background; give it a few minutes for a big library. Then turn the player off and on. At boot it asks to finish the database: press Select or wait 5 seconds (any other button says no). After that it updates itself at boot when files change.
-6. **Browse.** Main menu > library > Audiobooks:
-   - **Authors**: author, then their books. A book in a series starts with its series and number, so a series lists in order: "Harry Potter #5; Wizarding World #5: Harry Potter and the Order of the Phoenix".
-   - **Series**: each series and number, then the book (both editions, if you have two)
-   - **All Books**: every book by name
+## Audiobooks
+
+| Menu | What it lists |
+| --- | --- |
+| **Authors** | Each author, then their books. A book in a series starts with its series and number, so a series lists in order, for example "Harry Potter #5: Harry Potter and the Order of the Phoenix". |
+| **Series** | Each series and number, then the book. Two editions of the same book both appear. |
+| **All Books** | Every book, by name. |
+
+Rockbox adds [All tracks] and [Random] to the top of the Authors and Series lists. A theme can't remove them.
 
 ### How books are found
 
-- A file counts as an audiobook when its path has a folder named `AUDIOBOOKS` or it ends in `.m4b`. Music menus leave those files out.
-- Books are listed by their album tag (the book title in normal audiobook files), or by file name when there is none. A book in several files gets one line per file: "Book", "Book, part 2".
-- Series come from the grouping tag. Audiobookshelf writes it when you run its **Embed Metadata** tool on a book, as `Harry Potter #5; Wizarding World #5` ([source](https://github.com/advplyr/audiobookshelf/blob/master/server/utils/ffmpegHelpers.js)). Only groupings with a `#` count as series, because Rockbox fills an empty grouping with the track title. Books without one still show under their author, by title.
-- Each book resumes where you left it, however you open it.
-
-### The back button
-
-`keyremap.kmf` makes the back button work as on the stock firmware: a short press goes back one screen, holding it goes to the main menu. Only that button changes, and only in lists and menus; Left still goes back too. Rockbox checks the file against its own build at start-up and refuses it with a "key remap failed" message if its action numbers differ (then delete the file). `tools/keyremap.py` writes it.
+- A file counts as an audiobook when it is inside a folder named `AUDIOBOOKS`, on the player or the card, or when its name ends in `.m4b`. The music menus leave these files out.
+- Books are listed by their album tag, which holds the book title in most audiobook files. A book with no album tag is listed by its file name.
+- A book split into several files gets one line per file, for example "Book" and "Book, part 2". Picking a book queues the rest of the list, so the next one starts when it ends.
+- Series come from the grouping tag, written as `Series #N`. Several series can be separated by `; `, for example `Harry Potter #5; Wizarding World #5`.
+  - This is the format [Audiobookshelf](https://www.audiobookshelf.org/)'s Embed Metadata tool writes. Any tag editor can set it too.
+  - Only groupings that contain a `#` count as series, because Rockbox fills an empty grouping with the track title.
+  - Books without a series still appear under their author and in All Books.
 
 ### Covers
 
-Rockbox shows embedded JPEG covers, or `cover.jpg` / `folder.jpg` beside the file. It can't show PNG or progressive JPEG; those books get a plain book picture.
+Rockbox shows covers embedded in the file as JPEG, or a `cover.jpg` or `folder.jpg` file next to the book. It can't show PNG or progressive JPEG covers, so those books get a plain book picture instead.
 
-### Undo
+### Chapters
 
-- Theme: Settings > Theme Settings > Browse Theme Files > `cabbiev2`.
-- Database menus: delete `/.rockbox/tagnavi_user.config`.
-- Back button: delete `/.rockbox/keyremap.kmf` and restart.
+Rockbox doesn't read the chapters inside `.m4b` files. If a book has a cue sheet with the same name next to it (for example `Book.cue` beside `Book.m4b`), `zipstock-setup` turns on cue sheet support. Then Next and Previous skip between chapters.
 
-## Rebuilding the assets
+## The back button
+
+`.rockbox/keyremap.kmf` changes only the back button, and only in lists and menus:
+
+- A short press goes back one screen.
+- Holding it goes to the main menu.
+
+Left still goes back as well. Everything else keeps Rockbox's own key layout.
+
+Rockbox checks this file against its own build at start-up. If the build numbers its actions differently, Rockbox shows "key remap failed" and ignores the file. In that case, delete `/.rockbox/keyremap.kmf`. The rest of the theme works without it.
+
+## Undo
+
+- **Theme**: go to Settings > Theme Settings > Browse Theme Files and pick `cabbiev2`, Rockbox's default.
+- **Audiobook menus**: delete `/.rockbox/tagnavi_user.config`.
+- **Back button**: delete `/.rockbox/keyremap.kmf` and restart the player.
+
+## Development
+
+### Layout
+
+| Path | What it is |
+| --- | --- |
+| `theme/.rockbox/` | The theme, exactly as it is copied to the player. |
+| `INSTALL.txt` | The plain-text install notes that ship inside the zip as `ZIPSTOCK-README.txt`. |
+| `tools/ttf2fnt.py` | Converts a TTF font to Rockbox's anti-aliased `.fnt` format. |
+| `tools/images.py` | Draws the bitmaps. |
+| `tools/checkskin.py` | Checks the skins against Rockbox's own tag table. |
+| `tools/keyremap.py` | Writes `keyremap.kmf`. |
+| `tools/sim.sh` | Drives a Rockbox simulator under Xvfb, for screenshots. |
+| `build.sh` | Builds `zipstock-theme.zip`. |
+
+### Rebuilding the assets
 
 ```sh
 pip3 install pillow
 python3 tools/images.py theme/.rockbox/wps/zipstock
 python3 tools/ttf2fnt.py Nunito[wght].ttf theme/.rockbox/fonts
+python3 tools/keyremap.py theme/.rockbox/keyremap.kmf
 python3 tools/checkskin.py <rockbox source> theme theme/.rockbox/wps/zipstock.{sbs,wps,fms}
+./build.sh
 ```
 
-`Nunito[wght].ttf` is the variable font from Google Fonts.
+`Nunito[wght].ttf` is the variable font from [Google Fonts](https://fonts.google.com/specimen/Nunito). The action numbers in `tools/keyremap.py` must match the Rockbox build the file is meant for. They are documented in the script.
 
-## Notes on Rockbox's database menus
+### Notes on Rockbox's database menus
 
-Found while testing `tagnavi_user.config` in the simulator:
+These behaviours were found while testing `tagnavi_user.config` in the simulator:
 
 - In a `%format` condition, clauses are joined by spaces. An `&` silently ends the condition.
-- An empty tag compares as `<Untagged>`. Stock `tagnavi.config` tests for `[Untagged]`, which never matches.
-- A missing track number is stored as -1.
-- `[All tracks]` and `[Random]` are added to every list above the title level; a config can't remove them.
-- A `%format` condition on a text tag only works if the list's own search has opened that tag, or the database is in RAM. Otherwise the check silently fails. The book menus carry always-true clauses (`album !~ "~~~"`) to open the tags their formats test.
-- An empty grouping is stored as the track title.
+- An empty tag compares as `<Untagged>`. Rockbox's own `tagnavi.config` tests for `[Untagged]`, which never matches.
+- A missing track number is stored as -1, and an empty grouping is stored as the track title.
+- `[All tracks]` and `[Random]` are added to every list above the title level, and a config can't remove them.
+- A `%format` condition on a text tag only works if the list's own search has opened that tag, or if the database is loaded into RAM. Otherwise the condition silently fails. The book menus carry always-true clauses (`album !~ "~~~"`) to open the tags their formats test.
 
-## Releasing
+### CI and releases
 
-```sh
-git tag v1.0.0 && git push origin v1.0.0          # release
-git tag v1.0.0-beta.1 && git push origin v1.0.0-beta.1   # prerelease
-```
+CI runs on every push. It checks three things:
 
-Or run **Release** from the Actions tab, naming the tag; it creates the tag at
-the commit it builds. The Release workflow runs the same checks as CI, then publishes
-`zipstock-theme-<tag>.zip` on a GitHub release. CI checks every push:
-
-- the skins against the tag table of the Rockbox source the theme was tested
-  on (`ROCKBOX_SHA` in `.github/workflows/ci.yml`);
-- `keyremap.kmf` byte for byte against what `tools/keyremap.py` writes;
+- the skins, against the tag table of the Rockbox source the theme was tested on (`ROCKBOX_SHA` in `.github/workflows/ci.yml`);
+- `keyremap.kmf`, byte for byte, against what `tools/keyremap.py` writes;
 - that the zip holds every file the install notes name.
 
-It does not run the simulator: the screenshots come from it, but the run is
-by hand (`tools/sim.sh`).
+CI doesn't run the simulator. The screenshots are taken by hand with `tools/sim.sh`.
+
+To release, push a tag, or run **Release** from the Actions tab and give it the tag name:
+
+```sh
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+The release workflow runs the same checks, then publishes `zipstock-theme-<tag>.zip`. A tag containing a hyphen, such as `v1.1.0-beta.1`, is published as a prerelease.
 
 ## Licence
 
-The fonts are Nunito, under the SIL Open Font License (`theme/.rockbox/fonts/Nunito-OFL.txt`).
+ZipStock is under the [MIT License](LICENSE): the theme files, menus and tools.
+
+The fonts are [Nunito](https://github.com/googlefonts/nunito), © 2014 The Nunito Project Authors, under the SIL Open Font License 1.1 (`theme/.rockbox/fonts/Nunito-OFL.txt`).
