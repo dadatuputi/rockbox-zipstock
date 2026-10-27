@@ -15,12 +15,13 @@ All screenshots are screen dumps from the Rockbox simulator for the Clip Zip.
 | `INSTALL.txt` | The plain-text install notes that ship inside the zip. |
 | `tools/` | How the theme was made: `ttf2fnt.py` (TTF to Rockbox anti-aliased `.fnt`), `images.py` (draws the bitmaps), `checkskin.py` (static check of the skins), `keyremap.py` (writes `keyremap.kmf`), `sim.sh` (drives a Rockbox simulator under Xvfb). |
 | `build.sh` | Builds `zipstock-theme.zip` (the theme plus INSTALL.txt) for release. |
+| `.github/workflows/` | CI checks every push; a `v*` tag publishes the zip as a release. |
 
 ## Install
 
 You need a Clip Zip already running Rockbox, and a Mac or PC to copy files.
 
-1. **Get the files.** Download `zipstock-theme.zip` from Releases, or clone this repo and run `./build.sh`. Unzip it.
+1. **Get the files.** Download `zipstock-theme-<version>.zip` from [Releases](../../releases), or clone this repo and run `./build.sh`. Unzip it.
 2. **Copy the theme.** Plug in the player and copy the `.rockbox` folder onto the player's own drive (not the microSD card), merging it with the `.rockbox` folder already there. Nothing of Rockbox's is replaced. On a Mac, Finder hides dot folders; press Cmd+Shift+. to show them.
 3. **Pick the theme.** Eject, then on the player: Settings > Theme Settings > Browse Theme Files > `zipstock`.
 4. **Load the settings.** Settings > General Settings > Manage Settings > Browse .cfg Files > `zipstock-setup`. It sets the main menu, autoresume, bookmarks and faster scrolling. Don't load `simple.cfg` after it: that turns icons off, and the main menu pictures come from the icons.
@@ -72,6 +73,24 @@ Found while testing `tagnavi_user.config` in the simulator:
 - `[All tracks]` and `[Random]` are added to every list above the title level; a config can't remove them.
 - A `%format` condition on a text tag only works if the list's own search has opened that tag, or the database is in RAM. Otherwise the check silently fails. The book menus carry always-true clauses (`album !~ "~~~"`) to open the tags their formats test.
 - An empty grouping is stored as the track title.
+
+## Releasing
+
+```sh
+git tag v1.0.0 && git push origin v1.0.0          # release
+git tag v1.0.0-beta.1 && git push origin v1.0.0-beta.1   # prerelease
+```
+
+The Release workflow runs the same checks as CI, then publishes
+`zipstock-theme-<tag>.zip` on a GitHub release. CI checks every push:
+
+- the skins against the tag table of the Rockbox source the theme was tested
+  on (`ROCKBOX_SHA` in `.github/workflows/ci.yml`);
+- `keyremap.kmf` byte for byte against what `tools/keyremap.py` writes;
+- that the zip holds every file the install notes name.
+
+It does not run the simulator: the screenshots come from it, but the run is
+by hand (`tools/sim.sh`).
 
 ## Licence
 

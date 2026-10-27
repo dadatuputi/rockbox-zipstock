@@ -1,0 +1,45 @@
+name: Release
+
+# git tag v1.0.0 && git push origin v1.0.0
+# Runs the checks, then publishes zipstock-theme.zip on a GitHub release.
+# A tag with a hyphen (v1.0.0-beta.1) is marked as a prerelease.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build the zip
+        run: |
+          ./build.sh
+          mv zipstock-theme.zip "zipstock-theme-${GITHUB_REF_NAME}.zip"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          FLAGS=""
+          case "$GITHUB_REF_NAME" in *-*) FLAGS="--prerelease" ;; esac
+          cat > notes.md <<NOTES
+          Download **zipstock-theme-${GITHUB_REF_NAME}.zip**, unzip it, and follow
+          ZIPSTOCK-README.txt inside: copy the \`.rockbox\` folder onto the Clip Zip,
+          then pick the theme and load \`zipstock-setup\` on the player.
+
+          Needs a Clip Zip already running Rockbox. Checked against Rockbox's source
+          of 2026-10-25; on a much newer build, the back-button remap may be refused
+          ("key remap failed"). Delete \`/.rockbox/keyremap.kmf\` if so.
+          NOTES
+          gh release create "$GITHUB_REF_NAME" "zipstock-theme-${GITHUB_REF_NAME}.zip" \
+            --title "ZipStock $GITHUB_REF_NAME" --notes-file notes.md $FLAGS

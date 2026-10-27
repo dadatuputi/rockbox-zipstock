@@ -1,0 +1,71 @@
+name: CI
+
+# Checks the theme the way the README rebuilds it, without a player:
+# the skins against Rockbox's own tag table, the back-button remap against
+# the script that writes it, and the zip a release would ship.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  # The Rockbox source the theme was built and tested against in the
+  # simulator (2026-10-25). Bump it after testing against a newer one.
+  ROCKBOX_SHA: 66f3075f9ea9b8919192ee53ac09047d14b8b677
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Fetch Rockbox's skin tag table
+        run: |
+          mkdir -p rockbox/lib/skin_parser
+          curl -fsSL -o rockbox/lib/skin_parser/tag_table.c \
+            "https://raw.githubusercontent.com/Rockbox/rockbox/$ROCKBOX_SHA/lib/skin_parser/tag_table.c"
+
+      - name: Check the skins
+        run: |
+          python3 tools/checkskin.py rockbox theme \
+            theme/.rockbox/wps/zipstock.sbs \
+            theme/.rockbox/wps/zipstock.wps \
+            theme/.rockbox/wps/zipstock.fms
+
+      - name: keyremap.kmf is what tools/keyremap.py writes
+        run: |
+          python3 tools/keyremap.py "$RUNNER_TEMP/keyremap.kmf"
+          cmp "$RUNNER_TEMP/keyremap.kmf" theme/.rockbox/keyremap.kmf
+
+      - name: Build the zip
+        run: ./build.sh
+
+      - name: The zip has everything the install notes name
+        run: |
+          unzip -Z1 zipstock-theme.zip | sort > "$RUNNER_TEMP/got"
+          cat "$RUNNER_TEMP/got"
+          for f in ZIPSTOCK-README.txt \
+                   .rockbox/themes/zipstock.cfg \
+                   .rockbox/zipstock-setup.cfg \
+                   .rockbox/tagnavi_user.config \
+                   .rockbox/keyremap.kmf \
+                   .rockbox/wps/zipstock.sbs \
+                   .rockbox/wps/zipstock.wps \
+                   .rockbox/wps/zipstock.fms \
+                   .rockbox/fonts/Nunito-OFL.txt; do
+            grep -qxF "$f" "$RUNNER_TEMP/got" || { echo "missing from the zip: $f"; exit 1; }
+          done
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: zipstock-theme
+          path: zipstock-theme.zip
