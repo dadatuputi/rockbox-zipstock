@@ -10,7 +10,7 @@ The screenshots are screen dumps from the Rockbox simulator for the Clip Zip.
 ## Features
 
 - **Main menu**: one large picture per page with a lower-case name, the way the original firmware shows it. Up and Down move between pages, and Select opens one. The pages are playing, library, resume, folders, radio and settings.
-- **Lists**: five rows in a rounded font, with a blue selection bar. Long lines scroll sooner and faster than Rockbox's default.
+- **Lists**: five rows in a rounded font, with a blue selection bar. Long lines start scrolling sooner than Rockbox's default and glide a pixel at a time instead of jumping.
 - **Now Playing**: the cover, author, book, series (or part number), chapter title, a progress bar, and time gone and left. The volume shows while you change it.
 - **Audiobooks**: the library opens on Authors, Series and All Books, followed by the usual music menus with the books left out.
 - **Resume**: each book picks up where you left it, however you open it.
